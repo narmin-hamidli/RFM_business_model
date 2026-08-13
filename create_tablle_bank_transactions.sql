@@ -7,3 +7,6 @@ CREATE TABLE bank_transactions (
     transaction_date   DATE NOT NULL,
     CONSTRAINT chk_reverse_amount CHECK (reverse_amount <= amount)
 );
+
+ALTER TABLE bank_transactions
+ADD (mcc VARCHAR2(4));
