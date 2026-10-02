@@ -1,0 +1,15 @@
+SELECT
+    "exid" as "Bir_ID",
+    "TRANSACTION_LOCATIONS" as "Category",
+    "Turnover",
+    "LAST_TRANSACTION",
+    "termlocation",
+    "RFM_SCORE_FINAL",
+    "Partner_ext_id",
+    "PARTNER_NAME"
+FROM
+    "dataiku_ecosystem"."PARTNERSHIPREPORT_personalization_partner" tl
+    inner join "dataiku_ecosystem"."MATCHING_M10KAPUM_eco_customers_match" ecom on ecom."CMS_ID" = tl."CMS_ID"
+    inner join "dataiku_ecosystem"."PARTNERSHIPREPORT_terminals_final_gp" on TRIM(CAST("term" AS TEXT)) = TRIM(CAST("PARTNER_TERM_ID" AS TEXT))
+   
+--"dataiku_ecosystem"."PARTNERSHIPREPORT_terminals_final_gp"- this is the table that holds all partners' terminal ids
