@@ -1,0 +1,44 @@
+with
+ 
+trn_table as (
+    SELECT distinct "CMS_ID", 
+    "TRANSACTION_LOCATIONS_UPD" as "TRANSACTION_LOCATIONS",
+        COUNT(*) OVER(PARTITION BY "CMS_ID","TRANSACTION_LOCATIONS_UPD") "TRANSACTION_COUNT",   --frequency
+         sum("lcy_amount") over(partition by "CMS_ID","TRANSACTION_LOCATIONS_UPD") "TURNOVER", --monetary
+        max("value_date") over(partition by "CMS_ID","TRANSACTION_LOCATIONS_UPD") as "LAST_TRANSACTION" --recency
+    FROM "dataiku_ecosystem"."PARTNERSHIPREPORT_mcc_groups_last" a
+    
+),
+ 
+trn_table_2 as (
+    SELECT
+        distinct
+        "CMS_ID",
+        "TRANSACTION_LOCATIONS",
+        dense_rank() over (order by "TRANSACTION_LOCATIONS") as "TR_GROUP_ID",
+        "TRANSACTION_COUNT",
+        "TURNOVER",
+        "LAST_TRANSACTION",
+        NTILE(5) OVER(PARTITION BY "TRANSACTION_LOCATIONS" ORDER BY "LAST_TRANSACTION" ASC) in_category_recency,
+        NTILE(5) OVER(PARTITION BY "TRANSACTION_LOCATIONS" ORDER BY "TURNOVER" ASC) AS in_category_monetary,
+        NTILE(5) OVER(PARTITION BY "TRANSACTION_LOCATIONS" ORDER BY "TRANSACTION_COUNT" ASC) AS in_category_frequency,
+        NTILE(5) OVER(PARTITION BY "CMS_ID" ORDER BY "LAST_TRANSACTION" ASC) for_customer_recency,
+        NTILE(5) OVER(PARTITION BY "CMS_ID" ORDER BY "TURNOVER" ASC) AS for_customer_monetary,
+        NTILE(5) OVER(PARTITION BY "CMS_ID" ORDER BY "TRANSACTION_COUNT" ASC) AS for_customer_frequency
+    FROM trn_table
+),
+ 
+last as (select
+    trn2.*,
+    trn2.in_category_recency * 0.4 + trn2.in_category_frequency * 0.3 + trn2.in_category_monetary * 0.3 as category_rfm_score,
+    trn2.for_customer_recency * 0.4 + trn2.for_customer_frequency * 0.3 + trn2.for_customer_monetary * 0.3 as customer_rfm_score
+from trn_table_2 as trn2)
+ 
+ 
+select 
+distinct
+        "CMS_ID",
+        "TRANSACTION_LOCATIONS",
+         "LAST_TRANSACTION",
+         "category_rfm_score"*"customer_rfm_score" as "RFM_SCORE_FINAL"
+from last
