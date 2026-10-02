@@ -79,3 +79,4 @@ SELECT TRANSACTION_DATE,CUSTOMER_ID, AMOUNT, MCC, TERM_LOCATION,TERM_ID,
                                                    
                WHEN MCC IN ('5262','5961','5964','5965','5966','5967','5968','5969') THEN 'SHOPPING' ELSE 'UNCLASSIFIED' END AS "TRANSACTION_LOCATIONS_UPD"
                  FROM bank_transactions_raw
+-- as a result we get table that called "mcc_groups_last"
