@@ -1,0 +1,19 @@
+SELECT
+    pct."CMS_ID",
+    pct."TRANSACTION_LOCATIONS",
+    SUM("lcy_amount") as "Turnover",
+    "termlocation",
+    "term",
+    "LAST_TRANSACTION",
+    "RFM_SCORE_FINAL"
+FROM
+    "dataiku_ecosystem"."PARTNERSHIPREPORT_mcc_groups_last" mg
+    INNER JOIN "dataiku_ecosystem"."PARTNERSHIPREPORT_rfm_score" pct ON mg."TRANSACTION_LOCATIONS_UPD" = pct."TRANSACTION_LOCATIONS"
+    AND mg."CMS_ID" = pct."CMS_ID"
+GROUP BY
+    pct."CMS_ID",
+    pct."TRANSACTION_LOCATIONS",
+    "termlocation",
+    "term",
+    "LAST_TRANSACTION",
+    "RFM_SCORE_FINAL"
