@@ -1,0 +1,3 @@
+SELECT "Bir_ID", "Category", SUM("Turnover") "GMV", "RFM_SCORE_FINAL", "Partner_ext_id", "PARTNER_NAME"
+FROM "dataiku_ecosystem"."PARTNERSHIPREPORT_partners_with_terms"
+GROUP BY "Bir_ID", "Category",  "RFM_SCORE_FINAL", "Partner_ext_id", "PARTNER_NAME"
