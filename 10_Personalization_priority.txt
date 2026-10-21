@@ -1,0 +1,46 @@
+with category_ranked as (
+    select
+        "Bir_ID",
+        "Category",
+        "Partner_ext_id",
+        "Turnover",
+        "RFM_SCORE_FINAL",
+        DENSE_RANK() OVER (
+            PARTITION BY "Bir_ID"
+            ORDER BY "RFM_SCORE_FINAL" DESC
+        ) as "Category_priority"
+    from "dataiku_ecosystem"."PARTNERSHIPREPORT_personalization_last_2"
+),
+
+top_10_categories as (
+    select *
+    from category_ranked
+    where "Category_priority" <= 10
+),
+
+partner_ranked as (
+    select
+        "Bir_ID",
+        "Category",
+        "Category_priority",
+        "Partner_ext_id",
+        "Turnover",
+        "RFM_SCORE_FINAL",
+        ROW_NUMBER() OVER (
+            PARTITION BY "Bir_ID", "Category"
+            ORDER BY "Turnover" DESC
+        ) as "Partner_priority"
+    from top_10_categories
+)
+
+select
+    "Bir_ID",
+    "Category",
+    "Category_priority",
+    "Partner_ext_id",
+    "Turnover",
+    "RFM_SCORE_FINAL",
+    "Partner_priority"
+from partner_ranked
+where "Partner_priority" <= 2
+order by "Bir_ID", "Category_priority", "Partner_priority";
