@@ -1,0 +1,4 @@
+select  "Bir_ID", "Category", sum("GMV") "Turnover", "RFM_SCORE_FINAL", "Partner_ext_id"
+from "dataiku_ecosystem"."PARTNERSHIPREPORT_personalization_last"
+where "Bir_ID" is not null
+group by "Bir_ID", "Category", "RFM_SCORE_FINAL", "Partner_ext_id"
