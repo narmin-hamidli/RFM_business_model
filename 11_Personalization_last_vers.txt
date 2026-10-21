@@ -1,0 +1,3 @@
+SELECT CURRENT_DATE AS "Insert_date", "Bir_ID", "Category" as "Category_ID", "Partner_ext_id" AS "Partner_ID", "Partner_priority", "Category_priority"
+FROM "dataiku_ecosystem"."PARTNERSHIPREPORT_personalization_priority" pp
+INNER JOIN "dataiku_ecosystem"."PARTNERSHIPREPORT_category_id" ci on pp."Category"=ci."Category_ID"
